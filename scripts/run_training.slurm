@@ -2,7 +2,7 @@
 #SBATCH --job-name=agent_dpo
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
-#SBATCH --partition=gpu
+#SBATCH --partition=gpua100
 #SBATCH --gres=gpu:1
 #SBATCH --time=04:00:00
 #SBATCH --ntasks=1
@@ -31,6 +31,8 @@ mkdir -p results
 mkdir -p models
 
 cd "$PROJECT_ROOT"
+
+export WANDB_MODE=disabled
 
 echo "STARTING DPO TRAINING"
 echo "Project Root: $PROJECT_ROOT"

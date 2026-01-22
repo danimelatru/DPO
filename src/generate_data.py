@@ -2,64 +2,85 @@ import json
 import os
 import random
 
-# Define the output path
+# CONFIGURATION
 OUTPUT_DIR = "data/processed"
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "dpo_data.jsonl")
+NUM_EXAMPLES = 2500  # Increased from 500 to 2500 for better learning
 
-# Ensure directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# --- TEMPLATES FOR AGENTIC BEHAVIOR ---
-
-# Scenarios: The user asks a question that requires a specific tool.
-scenarios = [
+# --- SCENARIOS ---
+# Expanded scenarios to give the model more context
+tools = [
     {
-        "intent": "calculator",
-        "questions": ["Calculate 345 * 12.", "What is the square root of 144?", "Multiply 50 by 10."],
-        "tool_name": "calculator",
-        "correct_tool_call": lambda q: f'{{"tool": "calculator", "input": "{q}"}}'
+        "name": "calculator",
+        "desc": "Calculate math expressions",
+        "queries": [
+            ("Calculate 345 * 12", "345 * 12"),
+            ("Square root of 144", "sqrt(144)"),
+            ("What is 50 plus 10 divided by 2?", "(50 + 10) / 2"),
+            ("25 * 40", "25 * 40"),
+            ("100 minus 45", "100 - 45")
+        ],
+        "format": lambda q: f'{{"tool": "calculator", "args": "{q}"}}'
     },
     {
-        "intent": "search",
-        "questions": ["Who is the CEO of Meta?", "What is the population of London?", "Current stock price of NVIDIA."],
-        "tool_name": "web_search",
-        "correct_tool_call": lambda q: f'{{"tool": "web_search", "query": "{q}"}}'
+        "name": "web_search",
+        "desc": "Search the internet for current facts",
+        "queries": [
+            ("Who is the CEO of Meta?", "CEO of Meta"),
+            ("Current stock price of NVIDIA", "NVIDIA stock price"),
+            ("Population of London 2024", "London population 2024"),
+            ("Who won the last Super Bowl?", "Super Bowl winner"),
+            ("Weather in Paris today", "weather Paris")
+        ],
+        "format": lambda q: f'{{"tool": "web_search", "query": "{q}"}}'
     },
     {
-        "intent": "calendar",
-        "questions": ["Schedule a meeting with Mark for tomorrow.", "Check my availability for Friday.", "Add a reminder."],
-        "tool_name": "calendar_api",
-        "correct_tool_call": lambda q: f'{{"tool": "calendar_api", "action": "parse_intent", "text": "{q}"}}'
+        "name": "calendar",
+        "desc": "Schedule meetings and check availability",
+        "queries": [
+            ("Schedule a meeting with Mark for Monday", "Schedule meeting with Mark Monday"),
+            ("Check my availability for Friday", "Check availability Friday"),
+            ("Set a reminder for 5 PM", "Set reminder 5 PM"),
+            ("Book a room for the team sync", "Book room team sync")
+        ],
+        "format": lambda q: f'{{"tool": "calendar", "action": "{q}"}}'
     }
 ]
 
-def generate_entry(scenario, question):
-    """
-    Generates a single DPO triplet (prompt, chosen, rejected).
-    """
+def generate_entry():
+    # Pick a random tool scenario
+    tool = random.choice(tools)
+    user_query, tool_input = random.choice(tool["queries"])
     
     # 1. The Prompt
-    prompt = f"User: {question}\nYou are an agent with access to tools. Analyze the request and call the correct tool if necessary."
-
-    # 2. The CHOSEN Response (The "Winner")
-    # Features: Reasoning trace + Strict JSON tool call
-    chosen = (
-        f"Thought: The user is asking a question that requires external information or calculation. "
-        f"I should use the {scenario['tool_name']} tool to handle this.\n"
-        f"Action: ```json\n{scenario['correct_tool_call'](question)}\n```"
+    # We make the system prompt stricter
+    prompt = (
+        f"User: {user_query}\n"
+        f"You are an agent with access to tools. Analyze the request. "
+        f"If the user asks for something that requires calculation, external knowledge, or actions, "
+        f"you MUST output a 'Thought' followed by an 'Action' in JSON format.\n"
     )
 
-    # 3. The REJECTED Response (The "Loser")
-    # Features: Hallucination (guessing) OR Wrong format OR Lazy answering
-    failure_type = random.choice(["hallucination", "wrong_format", "lazy"])
+    # 2. The CHOSEN Response (Correct Agent Behavior)
+    chosen = (
+        f"Thought: The user is asking about '{user_query}'. This requires using the {tool['name']} tool.\n"
+        f"Action: ```json\n{tool['format'](tool_input)}\n```"
+    )
+
+    # 3. The REJECTED Response (Common failures we want to penalize)
+    fail_type = random.choice(["direct_answer", "refusal", "bad_format"])
     
-    if failure_type == "hallucination":
-        rejected = f"The answer is definitively 42. I am sure about this."
-    elif failure_type == "wrong_format":
-        # Missing the JSON block or Thought process
-        rejected = f"Call {scenario['tool_name']} with input {question}"
+    if fail_type == "direct_answer":
+        # The model answers directly without using the tool (hallucination risk)
+        rejected = f"Thought: I know the answer.\nThe answer is result."
+    elif fail_type == "refusal":
+        # The model is lazy or "safe"
+        rejected = "I cannot help with that request as I am an AI."
     else:
-        rejected = "I cannot help with that."
+        # The model forgets JSON
+        rejected = f"Action: {tool['name']} with {tool_input}"
 
     return {
         "prompt": prompt,
@@ -68,28 +89,15 @@ def generate_entry(scenario, question):
     }
 
 def main():
-    print(f"Generating synthetic agentic data at {OUTPUT_FILE}...")
+    print(f"Generating {NUM_EXAMPLES} synthetic agentic examples...")
     
-    dataset = []
-    
-    # Generate 500 synthetic examples (For a real project, we'd want 1k-5k, but 500 is enough to test pipeline)
-    for _ in range(500):
-        scenario = random.choice(scenarios)
-        question = random.choice(scenario["questions"])
-        
-        # Add some noise/variation to the question if you want (optional)
-        entry = generate_entry(scenario, question)
-        dataset.append(entry)
-
-    # Save to JSONL
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        for entry in dataset:
+        for _ in range(NUM_EXAMPLES):
+            entry = generate_entry()
             json.dump(entry, f)
             f.write('\n')
 
-    print(f"Success! Generated {len(dataset)} examples.")
-    print("Example entry:")
-    print(json.dumps(dataset[0], indent=2))
+    print(f"Done! Saved to {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()
