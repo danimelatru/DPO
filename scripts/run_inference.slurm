@@ -12,4 +12,5 @@ source ~/.bashrc
 conda activate research
 cd /gpfs/workdir/fernandeda/dpo
 
-python src/inference.py
+# python src/inference.py
+python src/inference_llama3.py

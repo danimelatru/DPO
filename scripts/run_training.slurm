@@ -38,5 +38,7 @@ echo "STARTING DPO TRAINING"
 echo "Project Root: $PROJECT_ROOT"
 echo "Using GPU: $CUDA_VISIBLE_DEVICES"
 
+export HF_TOKEN="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"
+
 # Run the training script (using -u for unbuffered output so logs update in real-time)
 python -u src/train_dpo.py

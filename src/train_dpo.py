@@ -7,9 +7,8 @@ from trl import DPOTrainer, DPOConfig
 
 def train():
     # --- CONFIGURATION ---
-    # Using TinyLlama to avoid gated access issues and speed up testing
     model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
-    new_model_name = "TinyLlama-Agent-DPO-v1"
+    new_model_name = "Llama3-8B-Agent-DPO-v1"
     
     # Paths
     data_path = "data/processed/dpo_data.jsonl"
