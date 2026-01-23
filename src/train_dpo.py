@@ -8,7 +8,7 @@ from trl import DPOTrainer, DPOConfig
 def train():
     # --- CONFIGURATION ---
     # Using TinyLlama to avoid gated access issues and speed up testing
-    model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
     new_model_name = "TinyLlama-Agent-DPO-v1"
     
     # Paths

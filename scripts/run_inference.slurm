@@ -9,9 +9,7 @@
 #SBATCH --cpus-per-task=4
 
 source ~/.bashrc
-conda activate meta-dpo
+conda activate research
 cd /gpfs/workdir/fernandeda/dpo
 
 python src/inference.py
-
-# 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

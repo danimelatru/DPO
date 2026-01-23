@@ -13,7 +13,7 @@ module purge
 source ~/.bashrc
 
 # Activate the specific environment for this project
-conda activate meta-dpo
+conda activate research
 
 # Define the root of your project
 # IMPORTANT: Change this path to where you actually cloned/created the folder
