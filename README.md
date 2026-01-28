@@ -110,7 +110,3 @@ The model successfully learned to transition from unstructured generation to a s
 ## 📜 License
 
 This project is open-sourced under the MIT License.
-
----
-
-*Developed as a research prototype for agentic AI alignment.*
