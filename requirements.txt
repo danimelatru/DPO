@@ -1,0 +1,32 @@
+# Core dependencies
+torch>=2.0.0
+transformers>=4.40.0
+datasets>=2.18.0
+peft>=0.10.0
+trl>=0.8.0
+bitsandbytes>=0.42.0
+accelerate>=0.29.0
+
+# Data processing
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Configuration
+pyyaml>=6.0
+
+# Math tools (for synthetic data)
+sympy>=1.12
+scipy>=1.10.0
+
+# Utilities
+jinja2>=3.1.0
+networkx>=3.0
+
+# Logging and monitoring
+wandb>=0.16.0
+
+# Development tools
+pytest>=7.4.0
+black>=23.0.0
+isort>=5.12.0
+flake8>=6.0.0

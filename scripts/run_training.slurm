@@ -1,44 +1,45 @@
 #!/bin/bash
-#SBATCH --job-name=agent_dpo
-#SBATCH --output=logs/%x_%j.out
-#SBATCH --error=logs/%x_%j.err
-#SBATCH --partition=gpua100
-#SBATCH --gres=gpu:1
+#SBATCH --job-name=agent_train_dpo
+#SBATCH --output=logs/train_%j.out
+#SBATCH --error=logs/train_%j.err
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:a100:1
 #SBATCH --time=04:00:00
+#SBATCH --mem=40G
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --exclude=ruche-gpu02,ruche-gpu11,ruche-gpu16,ruche-gpu17,ruche-gpu19
 
-module purge
+# Error handling
+set -e
+set -u
+set -o pipefail
+
+# Load environment
 source ~/.bashrc
-
-# Activate the specific environment for this project
 conda activate research
 
-# Define the root of your project
-# IMPORTANT: Change this path to where you actually cloned/created the folder
-PROJECT_ROOT=/gpfs/workdir/fernandeda/dpo
-export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
+# Navigate to project directory
+cd /gpfs/workdir/fernandeda/dpo || exit 1
 
-# Library fix (Kept from your template, good for ensuring CUDA libs load)
-if [ -n "$CONDA_PREFIX" ]; then
-  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
-fi
+# Log environment information
+echo "========================================"
+echo "Environment Information"
+echo "========================================"
+nvidia-smi
+echo "----------------------------------------"
+python --version
+echo "----------------------------------------"
+pip list | grep -E "(transformers|torch|trl|peft)"
+echo "========================================"
 
-# Create directories for logs and results if they don't exist
+# Create logs directory
 mkdir -p logs
-mkdir -p results
-mkdir -p models
 
-cd "$PROJECT_ROOT"
+# Run training with config
+echo "Starting DPO training..."
+python -m src.training.train_dpo --config configs/train_config.yaml
 
-export WANDB_MODE=disabled
-
-echo "STARTING DPO TRAINING"
-echo "Project Root: $PROJECT_ROOT"
-echo "Using GPU: $CUDA_VISIBLE_DEVICES"
-
-export HF_TOKEN="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"
-
-# Run the training script (using -u for unbuffered output so logs update in real-time)
-python -u src/train_dpo.py
+# Notify completion
+echo "========================================"
+echo "Training completed at $(date)"
+echo "========================================"

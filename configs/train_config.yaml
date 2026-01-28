@@ -1,0 +1,43 @@
+# Model configuration
+model:
+  base_model: "meta-llama/Meta-Llama-3-8B-Instruct"
+  new_model_name: "Llama3-8B-Agent-DPO-v1"
+
+# LoRA configuration
+lora:
+  r: 64
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+# Training hyperparameters
+training:
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-6
+  num_epochs: 3
+  warmup_ratio: 0.1
+  beta: 0.1
+  max_prompt_length: 512
+  max_length: 1024
+  save_steps: 100
+  logging_steps: 10
+  report_to: "wandb"
+  run_name: "agent-dpo-run-1"
+
+# Data configuration
+data:
+  path: "data/processed/dpo_data.jsonl"
+  num_examples: 2500
+  validation_split: null
+
+# Output configuration
+output:
+  dir: "models"
