@@ -29,25 +29,22 @@ Action:
 
 TOOL_DESCRIPTIONS = {
     "calculator": {
-    "name": "calculator",
-    "description": "Calculate mathematical expressions",
-    "args_schema": {"expression": "string"}
+        "name": "calculator",
+        "description": "Calculate mathematical expressions",
+        "args_schema": {"expression": "string"},
     },
-
     "web_search": {
-    "name": "web_search",
-    "description": "Search the internet for current facts",
-    "args_schema": {"query": "string"}
+        "name": "web_search",
+        "description": "Search the internet for current facts",
+        "args_schema": {"query": "string"},
     },
-
     "calendar": {
-    "name": "calendar",
-    "description": "Schedule meetings and check availability",
-    "args_schema": {
-    "action": "create | read",
-    "details": "string"}
-    }
+        "name": "calendar",
+        "description": "Schedule meetings and check availability",
+        "args_schema": {"action": "create | read", "details": "string"},
+    },
 }
+
 
 def format_agent_prompt(user_query: str, include_system: bool = True) -> str:
     """
@@ -74,6 +71,7 @@ def format_agent_prompt(user_query: str, include_system: bool = True) -> str:
 
     return prompt
 
+
 def format_llama3_chat(user_query: str, tokenizer) -> str:
     """
     Format prompt using Llama 3 chat template.
@@ -86,13 +84,9 @@ def format_llama3_chat(user_query: str, tokenizer) -> str:
     """
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_query}
+        {"role": "user", "content": user_query},
     ]
 
-    prompt = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
-    )
+    prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
     return prompt + "Thought:"

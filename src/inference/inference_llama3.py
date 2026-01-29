@@ -1,36 +1,32 @@
 """
 Inference script for Llama 3 model with chat template
 """
-import torch
+
 import argparse
 import logging
+
+import torch
 from peft import PeftModel
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from src.utils.prompts import SYSTEM_PROMPT
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 
-def generate_response(
-    user_prompt: str,
-    model,
-    tokenizer,
-    max_new_tokens: int = 300
-) -> str:
+def generate_response(user_prompt: str, model, tokenizer, max_new_tokens: int = 300) -> str:
     """
     Generate agent-style response using Llama 3 chat template.
-    
+
     Args:
         user_prompt: User query
         model: Loaded model
         tokenizer: Tokenizer with chat template
         max_new_tokens: Maximum generation length
-    
+
     Returns:
         Generated response starting with "Thought:"
     """
@@ -63,7 +59,7 @@ def generate_response(
         )
 
     # Decode only newly generated tokens
-    new_tokens = outputs[0][inputs.input_ids.shape[1]:]
+    new_tokens = outputs[0][inputs.input_ids.shape[1] :]
     generated_text = tokenizer.decode(new_tokens, skip_special_tokens=True)
 
     return "Thought:" + generated_text
@@ -76,15 +72,12 @@ def main():
         "--base-model",
         type=str,
         default="meta-llama/Meta-Llama-3-8B-Instruct",
-        help="Base model name"
+        help="Base model name",
     )
     parser.add_argument(
-        "--adapter",
-        type=str,
-        default="models/Llama3-8B-Agent-DPO-v1",
-        help="Path to DPO adapter"
+        "--adapter", type=str, default="models/Llama3-8B-Agent-DPO-v1", help="Path to DPO adapter"
     )
-    
+
     args = parser.parse_args()
 
     # Load model
@@ -107,9 +100,9 @@ def main():
         "Schedule a lunch with the Meta team for next Tuesday at 1pm.",
     ]
 
-    logger.info("\n" + "="*60)
+    logger.info("\n" + "=" * 60)
     logger.info("STARTING INFERENCE EVALUATION")
-    logger.info("="*60 + "\n")
+    logger.info("=" * 60 + "\n")
 
     for q in test_questions:
         logger.info(f"USER: {q}")

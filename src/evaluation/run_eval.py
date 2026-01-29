@@ -1,9 +1,11 @@
 """
 Evaluate DPO model on test set
 """
+
 import torch
 from peft import PeftModel
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from src.evaluation.metrics import evaluate_model
 
 # Load model
@@ -12,9 +14,7 @@ adapter_path = "models/Llama3-8B-Agent-DPO-v1"
 
 tokenizer = AutoTokenizer.from_pretrained(base_model_name)
 base_model = AutoModelForCausalLM.from_pretrained(
-    base_model_name,
-    torch_dtype=torch.bfloat16,
-    device_map="auto"
+    base_model_name, torch_dtype=torch.bfloat16, device_map="auto"
 )
 model = PeftModel.from_pretrained(base_model, adapter_path)
 
@@ -30,8 +30,8 @@ test_prompts = [
 # Evaluate
 results = evaluate_model(model, tokenizer, test_prompts)
 
-print("\n" + "="*60)
+print("\n" + "=" * 60)
 print("EVALUATION RESULTS")
-print("="*60)
-for metric, value in results['metrics'].items():
+print("=" * 60)
+for metric, value in results["metrics"].items():
     print(f"{metric:25s}: {value:.2%}")
