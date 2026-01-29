@@ -13,7 +13,6 @@ A project focused on **post-training alignment** of Small Language Models (SLMs)
 - **HPC Optimized:** Full SLURM integration for training on A100 clusters using mixed-precision (`bf16`).
 - **Parameter Efficient:** Uses LoRA (Low-Rank Adaptation) techniques for efficient fine-tuning.
 - **Interactive CLI:** Real-time testing interface for conversational agent interaction.
-- **Modular Architecture:** Professional code structure with configuration management and comprehensive evaluation metrics.
 
 ---
 
@@ -88,7 +87,7 @@ mkdir -p logs models data/processed
 ### 1. Generate Synthetic Training Data
 
 ```bash
-python -m src.data.generate_data   --output data/processed/dpo_data.jsonl   --num-examples 2500
+python -m src.data.generate_data --output data/processed/dpo_data.jsonl --num-examples 2500 --seed 42
 ```
 
 ### 2. Training

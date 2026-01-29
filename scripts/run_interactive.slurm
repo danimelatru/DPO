@@ -11,11 +11,12 @@
 
 # Error handling
 set -e
-set -u
 set -o pipefail
 
 # Load environment
 source ~/.bashrc
+set -u
+
 conda activate research
 
 # Navigate to project

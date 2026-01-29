@@ -2,8 +2,8 @@
 #SBATCH --job-name=agent_train_dpo
 #SBATCH --output=logs/train_%j.out
 #SBATCH --error=logs/train_%j.err
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:a100:1
+#SBATCH --partition=gpua100
+#SBATCH --gres=gpu:1
 #SBATCH --time=04:00:00
 #SBATCH --mem=40G
 #SBATCH --ntasks=1
@@ -11,11 +11,12 @@
 
 # Error handling
 set -e
-set -u
 set -o pipefail
 
 # Load environment
 source ~/.bashrc
+set -u
+
 conda activate research
 
 # Navigate to project directory

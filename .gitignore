@@ -31,7 +31,7 @@ env/
 # Models and Data (Too big for git)
 models/
 results/
-data/
+/data/
 logs/
 wandb/
 
