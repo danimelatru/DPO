@@ -1,0 +1,54 @@
+/Users/Danimelatru/.pyenv/versions/3.10.11/lib/python3.10/runpy.py:126: RuntimeWarning: 'src.training.train_dpo' found in sys.modules after import of package 'src.training', but prior to execution of 'src.training.train_dpo'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+2026-01-30 13:53:58,899 - __main__ - INFO - Loading configuration from configs/train_config.yaml
+2026-01-30 13:53:58,899 - src.utils.config - INFO - Loading config from configs/train_config.yaml
+2026-01-30 13:53:58,901 - src.utils.config - INFO - Configuration validation passed
+2026-01-30 13:53:58,901 - __main__ - INFO - ============================================================
+2026-01-30 13:53:58,901 - __main__ - INFO - DPO Training Configuration
+2026-01-30 13:53:58,901 - __main__ - INFO - ============================================================
+2026-01-30 13:53:58,901 - __main__ - INFO - Base Model: meta-llama/Meta-Llama-3-8B-Instruct
+2026-01-30 13:53:58,901 - __main__ - INFO - Output Model: Llama3-8B-Agent-DPO-v1
+2026-01-30 13:53:58,901 - __main__ - INFO - Data Path: data/processed/dpo_data.jsonl
+2026-01-30 13:53:58,901 - __main__ - INFO - Output Directory: models/Llama3-8B-Agent-DPO-v1
+2026-01-30 13:53:58,901 - __main__ - INFO - ============================================================
+2026-01-30 13:53:58,901 - __main__ - INFO - Loading training dataset...
+2026-01-30 13:53:58,901 - src.data.data_loader - INFO - Loading dataset from data/processed/dpo_data.jsonl
+2026-01-30 13:53:59,283 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/json/json.py "HTTP/1.1 200 OK"
+2026-01-30 13:53:59,387 - src.data.data_loader - INFO - Loaded 2500 examples
+2026-01-30 13:53:59,387 - src.data.data_loader - INFO - Validating dataset...
+2026-01-30 13:53:59,412 - src.data.data_loader - INFO - Dataset validation passed
+2026-01-30 13:53:59,412 - __main__ - INFO - Initializing DPO trainer...
+2026-01-30 13:53:59,412 - src.training.trainer - INFO - Loading tokenizer: meta-llama/Meta-Llama-3-8B-Instruct
+2026-01-30 13:54:00,014 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:00,199 - httpx - INFO - HTTP Request: GET https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:00,369 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:00,538 - httpx - INFO - HTTP Request: GET https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:00,729 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:00,880 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/meta-llama/Meta-Llama-3-8B-Instruct/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-01-30 13:54:01,030 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/meta-llama/Meta-Llama-3-8B-Instruct/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-01-30 13:54:01,246 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/tokenizer.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:01,508 - httpx - INFO - HTTP Request: GET https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/tokenizer.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:05,642 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/tokenizer.model "HTTP/1.1 404 Not Found"
+2026-01-30 13:54:05,799 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/added_tokens.json "HTTP/1.1 404 Not Found"
+2026-01-30 13:54:05,974 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/special_tokens_map.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:06,155 - httpx - INFO - HTTP Request: GET https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/special_tokens_map.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:06,334 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/chat_template.jinja "HTTP/1.1 404 Not Found"
+2026-01-30 13:54:07,169 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/meta-llama/Meta-Llama-3-8B-Instruct "HTTP/1.1 200 OK"
+2026-01-30 13:54:07,200 - src.training.trainer - INFO - Loading base model: meta-llama/Meta-Llama-3-8B-Instruct
+2026-01-30 13:54:07,200 - src.training.trainer - INFO - Attempting to load from cache (offline mode)...
+2026-01-30 13:54:07,350 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/adapter_config.json "HTTP/1.1 404 Not Found"
+`torch_dtype` is deprecated! Use `dtype` instead!
+2026-01-30 13:54:07,367 - src.training.trainer - WARNING - Cache incomplete or missing: meta-llama/Meta-Llama-3-8B-Instruct does not appear to have a file named pytorch_model.bin or model....
+2026-01-30 13:54:07,367 - src.training.trainer - INFO - Downloading model from HuggingFace (this will take 10-20 minutes for 16GB)...
+2026-01-30 13:54:07,367 - src.training.trainer - INFO - You can cancel and download manually if preferred.
+2026-01-30 13:54:07,540 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:07,699 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:07,854 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/model.safetensors "HTTP/1.1 404 Not Found"
+2026-01-30 13:54:08,066 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/model.safetensors.index.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:08,235 - httpx - INFO - HTTP Request: GET https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/main/model.safetensors.index.json "HTTP/1.1 200 OK"
+2026-01-30 13:54:08,467 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/meta-llama/Meta-Llama-3-8B-Instruct/revision/main "HTTP/1.1 200 OK"
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]2026-01-30 13:54:08,663 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/8afb486c1db24fe5011ec46dfbe5b5dccdb575c2/model-00002-of-00004.safetensors "HTTP/1.1 302 Found"
+2026-01-30 13:54:08,851 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/meta-llama/Meta-Llama-3-8B-Instruct/xet-read-token/8afb486c1db24fe5011ec46dfbe5b5dccdb575c2 "HTTP/1.1 200 OK"
+2026-01-30 13:54:08,852 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/8afb486c1db24fe5011ec46dfbe5b5dccdb575c2/model-00003-of-00004.safetensors "HTTP/1.1 302 Found"
+2026-01-30 13:54:08,854 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/8afb486c1db24fe5011ec46dfbe5b5dccdb575c2/model-00004-of-00004.safetensors "HTTP/1.1 302 Found"
+2026-01-30 13:54:08,874 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/resolve/8afb486c1db24fe5011ec46dfbe5b5dccdb575c2/model-00001-of-00004.safetensors "HTTP/1.1 302 Found"

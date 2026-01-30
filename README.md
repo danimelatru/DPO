@@ -129,16 +129,14 @@ sbatch scripts/run_training.slurm
 
 ```bash
 python -m src.inference.inference_llama3 \
-    --model-path models/Llama3-8B-Agent-DPO-v1 \
-    --test-file data/test_data.jsonl \
-    --output results.jsonl
+    --adapter models/Llama3-8B-Agent-DPO-v1
 ```
 
 #### Interactive CLI
 
 ```bash
 python -m src.inference.interactive_cli \
-    --model-path models/Llama3-8B-Agent-DPO-v1
+    --adapter models/Llama3-8B-Agent-DPO-v1
 ```
 
 ### 4. Testing

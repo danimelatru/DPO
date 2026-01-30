@@ -2,8 +2,10 @@
 Wrapper class for DPOTrainer with additional utilities
 """
 
+
 import logging
 from typing import Dict, Optional
+
 
 import torch
 from datasets import Dataset
@@ -11,7 +13,9 @@ from peft import LoraConfig, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from trl import DPOConfig, DPOTrainer
 
+
 logger = logging.getLogger(__name__)
+
 
 
 class DPOTrainerWrapper:
@@ -19,11 +23,13 @@ class DPOTrainerWrapper:
     High-level wrapper for DPO training with sensible defaults
     """
 
+
     def __init__(
         self, model_name: str, config: Dict, tokenizer: Optional[AutoTokenizer] = None
     ) -> None:
         """
         Initialize DPO trainer wrapper.
+
 
         Args:
             model_name: HuggingFace model identifier
@@ -33,6 +39,7 @@ class DPOTrainerWrapper:
         self.model_name = model_name
         self.config = config
 
+
         # Load tokenizer
         if tokenizer is None:
             logger.info(f"Loading tokenizer: {model_name}")
@@ -41,20 +48,43 @@ class DPOTrainerWrapper:
         else:
             self.tokenizer = tokenizer
 
-        # Load model
+
+        # Load model (will use cache automatically if available)
         logger.info(f"Loading base model: {model_name}")
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_name, torch_dtype=torch.bfloat16, device_map="auto"
-        )
+        
+        # Try offline mode first (use only cached files)
+        try:
+            logger.info("Attempting to load from cache (offline mode)...")
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                torch_dtype=torch.bfloat16,
+                device_map="auto",
+                local_files_only=True,  # Force offline mode
+            )
+            logger.info("✅ Model loaded from cache successfully")
+            
+        except (OSError, ValueError, FileNotFoundError) as e:
+            # Cache is incomplete or missing, need to download
+            logger.warning(f"Cache incomplete or missing: {str(e)[:100]}...")
+            logger.info("Downloading model from HuggingFace (this will take 10-20 minutes for 16GB)...")
+            logger.info("You can cancel and download manually if preferred.")
+            
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                torch_dtype=torch.bfloat16,
+                device_map="auto",
+                local_files_only=False,  # Allow download
+                resume_download=True,     # Resume if interrupted
+            )
+            logger.info("✅ Model downloaded and loaded successfully")
 
-        # Apply LoRA
-        self._apply_lora()
 
-        self.trainer = None
+
 
     def _apply_lora(self) -> None:
         """Apply LoRA configuration to model"""
         lora_config: Dict = self.config.get("lora", {})
+
 
         peft_config = LoraConfig(
             r=lora_config.get("r", 64),
@@ -68,19 +98,23 @@ class DPOTrainerWrapper:
             ),
         )
 
+
         logger.info(f"Applying LoRA with r={peft_config.r}")
         self.model = get_peft_model(self.model, peft_config)
         self.model.print_trainable_parameters()
 
+
     def setup_trainer(self, train_dataset: Dataset, output_dir: str) -> None:
         """
         Setup DPO trainer with dataset.
+
 
         Args:
             train_dataset: Training dataset
             output_dir: Directory for checkpoints
         """
         training_config = self.config.get("training", {})
+
 
         training_args = DPOConfig(
             output_dir=output_dir,
@@ -101,6 +135,7 @@ class DPOTrainerWrapper:
             max_length=training_config.get("max_length", 1024),
         )
 
+
         logger.info("Initializing DPOTrainer")
         self.trainer = DPOTrainer(
             model=self.model,
@@ -110,18 +145,22 @@ class DPOTrainerWrapper:
             processing_class=self.tokenizer,
         )
 
+
     def train(self) -> None:
         """Start training"""
         if self.trainer is None:
             raise RuntimeError("Trainer not setup. Call setup_trainer() first")
 
+
         logger.info("Starting DPO training...")
         self.trainer.train()
         logger.info("Training completed")
 
+
     def save_model(self, output_dir: str) -> None:
         """
         Save trained model.
+
 
         Args:
             output_dir: Directory to save model
